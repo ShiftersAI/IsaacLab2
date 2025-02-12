@@ -855,3 +855,63 @@ def repeated_objects_terrain(
     meshes_list.append(platform)
 
     return meshes_list, origin
+
+
+def pallet_terrain(difficulty: float, cfg: mesh_terrains_cfg.MeshPalletsTerrainCfg) -> tuple[list[trimesh.Trimesh], np.ndarray]:
+    """Generate a terrain with box rails as extrusions.
+ 
+    The terrain contains two sets of box rails created as extrusions. The first set  (inner rails) is extruded from
+    the platform at the center of the terrain, and the second set is extruded between the first set of rails
+    and the terrain border. Each set of rails is extruded to the same height.
+
+    .. image:: ../../_static/terrains/trimesh/rails_terrain.jpg
+       :width: 40%
+       :align: center
+
+    Args:
+        difficulty: The difficulty of the terrain. this is a value between 0 and 1.
+        cfg: The configuration for the terrain.
+
+    Returns:
+        A tuple containing the tri-mesh of the terrain and the origin of the terrain (in m).
+    """
+    # resolve the terrain configuration
+    pallet_height = cfg.pallet_height_range[1] - difficulty * (cfg.pallet_height_range[1] - cfg.pallet_height_range[0])
+
+    # initialize list of meshes
+    meshes_list = list()
+    # extract quantities
+    rail_1_thickness, rail_2_thickness = cfg.pallet_thickness_range
+    rail_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], pallet_height * 0.5)
+    # constants for terrain generation
+    terrain_height = 1.0
+    rail_2_ratio = 0.6
+    num_rails = 8
+    del_x = (cfg.size[0]-cfg.platform_width)/8
+    del_y = (cfg.size[1]-cfg.platform_width)/8
+
+    # generate first set of rails
+    # rail_1_inner_size = (cfg.platform_width, cfg.platform_width)
+    rail_1_inner_size = (0.01, 0.01)
+    rail_1_outer_size = (cfg.platform_width + 2.0 * rail_1_thickness, cfg.platform_width + 2.0 * rail_1_thickness)
+    meshes_list += make_border(rail_1_outer_size, rail_1_inner_size, pallet_height, rail_center)
+    for i in range(num_rails):
+        rail_1_inner_size = (cfg.platform_width + i*del_x, cfg.platform_width + i*del_y)
+        rail_1_outer_size = (cfg.platform_width + 2.0 * rail_1_thickness + i*del_x, cfg.platform_width + 2.0 * rail_1_thickness + i*del_y)
+        meshes_list += make_border(rail_1_outer_size, rail_1_inner_size, pallet_height, rail_center)
+    # generate second set of rails
+    # rail_2_inner_x = cfg.platform_width + (cfg.size[0] - cfg.platform_width) * rail_2_ratio
+    # rail_2_inner_y = cfg.platform_width + (cfg.size[1] - cfg.platform_width) * rail_2_ratio
+    # rail_2_inner_size = (rail_2_inner_x, rail_2_inner_y)
+    # rail_2_outer_size = (rail_2_inner_x + 2.0 * rail_2_thickness, rail_2_inner_y + 2.0 * rail_2_thickness)
+    # meshes_list += make_border(rail_2_outer_size, rail_2_inner_size, pallet_height, rail_center)
+    # generate the ground
+    dim = (cfg.size[0], cfg.size[1], terrain_height)
+    pos = (0.5 * cfg.size[0], 0.5 * cfg.size[1], -terrain_height / 2)
+    ground_meshes = trimesh.creation.box(dim, trimesh.transformations.translation_matrix(pos))
+    meshes_list.append(ground_meshes)
+
+    # specify the origin of the terrain
+    origin = np.array([pos[0], pos[1], pallet_height])
+
+    return meshes_list, origin

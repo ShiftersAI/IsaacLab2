@@ -94,6 +94,19 @@ class MeshRailsTerrainCfg(SubTerrainBaseCfg):
     platform_width: float = 1.0
     """The width of the square platform at the center of the terrain. Defaults to 1.0."""
 
+@configclass
+class MeshPalletsTerrainCfg(SubTerrainBaseCfg):
+    """Configuration for a terrain with box rails as extrusions."""
+
+    function = mesh_terrains.pallet_terrain
+
+    pallet_thickness_range: tuple[float, float] = MISSING
+    """The thickness of the inner and outer rails (in m)."""
+    pallet_height_range: tuple[float, float] = MISSING
+    """The minimum and maximum height of the rails (in m)."""
+    platform_width: float = 1.0
+    """The width of the square platform at the center of the terrain. Defaults to 1.0."""
+
 
 @configclass
 class MeshPitTerrainCfg(SubTerrainBaseCfg):
@@ -267,3 +280,4 @@ class MeshRepeatedCylindersTerrainCfg(MeshRepeatedObjectsTerrainCfg):
     """The box curriculum parameters at the start of the curriculum."""
     object_params_end: ObjectCfg = MISSING
     """The box curriculum parameters at the end of the curriculum."""
+

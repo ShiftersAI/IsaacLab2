@@ -83,6 +83,8 @@ class UniformVelocityCommand(CommandTerm):
         # -- metrics
         self.metrics["error_vel_xy"] = torch.zeros(self.num_envs, device=self.device)
         self.metrics["error_vel_yaw"] = torch.zeros(self.num_envs, device=self.device)
+        self.metrics["CoT"]= torch.zeros(self.num_envs, device=self.device)
+
 
     def __str__(self) -> str:
         """Return a string representation of the command generator."""
@@ -119,6 +121,9 @@ class UniformVelocityCommand(CommandTerm):
         self.metrics["error_vel_yaw"] += (
             torch.abs(self.vel_command_b[:, 2] - self.robot.data.root_ang_vel_b[:, 2]) / max_command_step
         )
+        # compute CoT
+        self.metrics["CoT"] = torch.norm(torch.multiply(self.robot.data.applied_torque,self.robot.data.joint_vel),dim=1) / (torch.norm(self.robot.data.root_lin_vel_b[:, :2],dim=1)+1)
+
 
     def _resample_command(self, env_ids: Sequence[int]):
         # sample velocity commands
