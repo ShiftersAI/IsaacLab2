@@ -141,7 +141,7 @@ UNITREE_GO1_CFG = ArticulationCfg(
             damping=0.75,
             friction=0.0,
             min_delay=0,  
-            max_delay=8,  
+            max_delay=0,  
         ),
     },
 )
