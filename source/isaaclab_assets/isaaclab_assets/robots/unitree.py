@@ -156,9 +156,9 @@ UNITREE_GO1_CFG = ArticulationCfg(
         ),
         "calf": DelayedPDActuatorCfg(
             joint_names_expr=[".*_calf_joint"],
-            effort_limit=23.5*1.5,
+            effort_limit=35.2,
             # saturation_effort=23.5,
-            velocity_limit=30.0/1.5,
+            velocity_limit=20.0,
             stiffness=30.0,
             damping=0.75,
             friction=0.0,
