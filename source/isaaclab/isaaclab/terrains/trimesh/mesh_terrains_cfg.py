@@ -98,11 +98,11 @@ class MeshRailsTerrainCfg(SubTerrainBaseCfg):
 class MeshPalletsTerrainCfg(SubTerrainBaseCfg):
     """Configuration for a terrain with box rails as extrusions."""
 
-    function = mesh_terrains.pallet_terrain
+    function = mesh_terrains.pallet_terrain2
 
     pallet_thickness_range: tuple[float, float] = MISSING
     """The thickness of the inner and outer rails (in m)."""
-    pallet_height_range: tuple[float, float] = MISSING
+    pallet_duty_range: tuple[float, float] = MISSING
     """The minimum and maximum height of the rails (in m)."""
     platform_width: float = 1.0
     """The width of the square platform at the center of the terrain. Defaults to 1.0."""

@@ -878,13 +878,16 @@ def pallet_terrain(difficulty: float, cfg: mesh_terrains_cfg.MeshPalletsTerrainC
     # resolve the terrain configuration
     pallet_height = cfg.pallet_height_range[1] - difficulty * (cfg.pallet_height_range[1] - cfg.pallet_height_range[0])
 
+    pallet_height_std = cfg.pallet_height_range[0] + difficulty * (cfg.pallet_height_range[1] - cfg.pallet_height_range[0])
     # initialize list of meshes
     meshes_list = list()
     # extract quantities
     rail_1_thickness, rail_2_thickness = cfg.pallet_thickness_range
-    rail_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], pallet_height * 0.5)
+    # rail_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], pallet_height * 0.5)
+    rail_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], 0.0)
+    
     # constants for terrain generation
-    terrain_height = 1.0
+    terrain_height = 0.0
     rail_2_ratio = 0.6
     num_rails = 8
     del_x = (cfg.size[0]-cfg.platform_width)/8
@@ -907,7 +910,41 @@ def pallet_terrain(difficulty: float, cfg: mesh_terrains_cfg.MeshPalletsTerrainC
     # meshes_list += make_border(rail_2_outer_size, rail_2_inner_size, pallet_height, rail_center)
     # generate the ground
     dim = (cfg.size[0], cfg.size[1], terrain_height)
-    pos = (0.5 * cfg.size[0], 0.5 * cfg.size[1], -terrain_height / 2)
+    pos = (0.5 * cfg.size[0], 0.5 * cfg.size[1], -1-terrain_height / 2)
+    ground_meshes = trimesh.creation.box(dim, trimesh.transformations.translation_matrix(pos))
+    meshes_list.append(ground_meshes)
+
+    # specify the origin of the terrain
+    origin = np.array([pos[0], pos[1], pallet_height])
+
+    return meshes_list, origin
+
+def pallet_terrain2(difficulty: float, cfg: mesh_terrains_cfg.MeshPalletsTerrainCfg) -> tuple[list[trimesh.Trimesh], np.ndarray]:
+    
+    # resolve the terrain configuration
+    pallet_spacing = cfg.pallet_thickness_range[0] + difficulty * (cfg.pallet_thickness_range[1] - cfg.pallet_thickness_range[0]) #The total distance between two pallets
+    Number_of_pallets = int((cfg.size[0]-cfg.platform_width) / (pallet_spacing)) # The number of pallets that can fit in the terrain
+    print("size: ", cfg.size[0])
+    print("platform_width: ", cfg.platform_width)
+    print("pallet_spacing: ", pallet_spacing)
+    print("Number of pallets: ", Number_of_pallets)
+    pallet_duty = cfg.pallet_duty_range[0] + difficulty * (cfg.pallet_duty_range[1] - cfg.pallet_duty_range[0]) # A number between 0 and 1
+    # initialize list of meshes
+    meshes_list = list()
+    # Create the platform 
+    pallet_height =1
+    rail_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], 0.0)
+    rail_1_inner_size = (0.01, 0.01)
+    rail_1_outer_size = (cfg.platform_width , cfg.platform_width)
+    meshes_list += make_border(rail_1_outer_size, rail_1_inner_size, pallet_height, rail_center)
+    for i in range(Number_of_pallets+2):
+        rail_1_inner_size = (cfg.platform_width + (i-1+pallet_duty)*pallet_spacing, cfg.platform_width + (i-1+pallet_duty)*pallet_spacing)
+        rail_1_outer_size = (cfg.platform_width + i*pallet_spacing, cfg.platform_width + i*pallet_spacing)
+        rail_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], np.random.uniform(-0.1*difficulty, 0.1*difficulty))
+        meshes_list += make_border(rail_1_outer_size, rail_1_inner_size, pallet_height, rail_center)
+    terrain_height =0
+    dim = (cfg.size[0], cfg.size[1], terrain_height)
+    pos = (0.5 * cfg.size[0], 0.5 * cfg.size[1], 0.1)
     ground_meshes = trimesh.creation.box(dim, trimesh.transformations.translation_matrix(pos))
     meshes_list.append(ground_meshes)
 
