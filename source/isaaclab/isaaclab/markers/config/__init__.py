@@ -19,6 +19,14 @@ RAY_CASTER_MARKER_CFG = VisualizationMarkersCfg(
         ),
     },
 )
+RAY_CASTER_MARKER_G_CFG = VisualizationMarkersCfg(
+    markers={
+        "hit": sim_utils.SphereCfg(
+            radius=0.02,
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.0, 1.0, 0.0)),
+        ),
+    },
+)
 """Configuration for the ray-caster marker."""
 
 
