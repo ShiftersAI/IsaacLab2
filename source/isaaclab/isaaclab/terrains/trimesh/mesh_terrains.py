@@ -924,10 +924,10 @@ def pallet_terrain2(difficulty: float, cfg: mesh_terrains_cfg.MeshPalletsTerrain
     # resolve the terrain configuration
     pallet_spacing = cfg.pallet_thickness_range[0] + difficulty * (cfg.pallet_thickness_range[1] - cfg.pallet_thickness_range[0]) #The total distance between two pallets
     Number_of_pallets = int((cfg.size[0]-cfg.platform_width) / (pallet_spacing)) # The number of pallets that can fit in the terrain
-    print("size: ", cfg.size[0])
-    print("platform_width: ", cfg.platform_width)
-    print("pallet_spacing: ", pallet_spacing)
-    print("Number of pallets: ", Number_of_pallets)
+    # print("size: ", cfg.size[0])
+    # print("platform_width: ", cfg.platform_width)
+    # print("pallet_spacing: ", pallet_spacing)
+    # print("Number of pallets: ", Number_of_pallets)
     pallet_duty = cfg.pallet_duty_range[0] + difficulty * (cfg.pallet_duty_range[1] - cfg.pallet_duty_range[0]) # A number between 0 and 1
     # initialize list of meshes
     meshes_list = list()
